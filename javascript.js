@@ -31,3 +31,20 @@ const operate = function(operator, a, b) {
         return divide(a, b);
     }
 }
+
+let displayValue = '';
+const display = document.getElementById('display');
+const buttons = document.querySelectorAll('button');
+buttons.forEach((button) => {
+    button.addEventListener('click', (e) => {
+        if (e.target.textContent == 'AC') {
+            displayValue = '';
+            display.textContent = displayValue;
+        }
+        else {
+            displayValue += e.target.textContent
+            display.textContent = displayValue;
+        }
+    });
+});
+
