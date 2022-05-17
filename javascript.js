@@ -58,18 +58,17 @@ buttons.forEach((button) => {
                 storedValue = displayValue;
                 operator = e.target.textContent;
                 displayValue = '0';
-                prevKey = 'operator';
             }
-            else {
-                if (storedValue != '') {
+            else if (prevKey == 'num') {
+                if (storedValue) {
                     displayValue = operate(operator, storedValue, display.textContent);
                     display.textContent = displayValue;
                 }
                 storedValue = displayValue;
                 operator = e.target.textContent;
                 displayValue = '0';
-                prevKey = 'operator';
             }
+            prevKey = 'operator';
         }
         else if (e.target.className == 'equals' &&
                 prevKey != 'equals' &&
@@ -77,10 +76,10 @@ buttons.forEach((button) => {
             if (operator) {
                 displayValue = operate(operator, storedValue, displayValue);
                 operator = '';
-                // storedValue = displayValue;
+                storedValue = '';
                 display.textContent = displayValue;
-                prevKey = 'equals';
             }
+            prevKey = 'equals';
         }
         else if (e.target.className == 'digit') {
             if (displayValue == '0' ||
