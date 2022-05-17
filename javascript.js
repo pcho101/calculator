@@ -71,15 +71,25 @@ buttons.forEach((button) => {
                 prevKey = 'operator';
             }
         }
-        else if (e.target.className == 'equals' && prevKey != 'equals' && prevKey != 'operator') {
-            displayValue = operate(operator, storedValue, displayValue);
-            operator = '';
-            storedValue = displayValue;
-            display.textContent = displayValue;
-            prevKey = 'equals';
+        else if (e.target.className == 'equals' &&
+                prevKey != 'equals' &&
+                prevKey != 'operator') {
+            if (operator) {
+                displayValue = operate(operator, storedValue, displayValue);
+                operator = '';
+                // storedValue = displayValue;
+                display.textContent = displayValue;
+                prevKey = 'equals';
+            }
         }
         else if (e.target.className == 'digit') {
-            displayValue += e.target.textContent;
+            if (displayValue == '0' ||
+                prevKey == 'equals') {
+                displayValue = e.target.textContent;
+            }
+            else {
+                displayValue += e.target.textContent;
+            }
             display.textContent = displayValue;
             prevKey = 'num';
         }
