@@ -92,6 +92,12 @@ buttons.forEach((button) => {
             display.textContent = truncate(displayValue);
             prevKey = 'num';
         }
+        else if (e.target.className == 'decimal') {
+            if (!displayValue.includes('.')) {
+                displayValue += e.target.textContent;
+                display.textContent = truncate(displayValue);
+            }
+        }
     });
 });
 
