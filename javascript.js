@@ -62,7 +62,7 @@ buttons.forEach((button) => {
             else if (prevKey == 'num') {
                 if (storedValue) {
                     displayValue = operate(operator, storedValue, display.textContent);
-                    display.textContent = displayValue;
+                    display.textContent = truncate(displayValue);
                 }
                 storedValue = displayValue;
                 operator = e.target.textContent;
@@ -77,7 +77,7 @@ buttons.forEach((button) => {
                 displayValue = operate(operator, storedValue, displayValue);
                 operator = '';
                 storedValue = '';
-                display.textContent = displayValue;
+                display.textContent = truncate(displayValue);
             }
             prevKey = 'equals';
         }
@@ -89,9 +89,34 @@ buttons.forEach((button) => {
             else {
                 displayValue += e.target.textContent;
             }
-            display.textContent = displayValue;
+            display.textContent = truncate(displayValue);
             prevKey = 'num';
         }
     });
 });
 
+const maxDisplayLength = 8;
+const maxDisplayNumber = 10 ** maxDisplayLength - 1;
+const minDisplayNumber = -(10 ** maxDisplayLength - 1);
+const truncate = function(num) {
+    let numberString;
+    if (num > maxDisplayNumber ||
+        num < minDisplayNumber) {
+        const power = Math.round(getBaseLog(10, Math.abs(num)));
+        const exponent = 'e' + power.toString();
+        const startDigit = num.toString()[0];
+        const midDigits = num.toString().slice(1, maxDisplayLength - exponent.length - 1);
+        numberString = startDigit + '.' + midDigits + exponent;
+    }
+    else if (num.toString().length > maxDisplayLength) {
+        numberString = num.toString().slice(0, maxDisplayLength);
+    }
+    else {
+        numberString = num.toString();
+    }
+    return numberString;
+};
+
+const getBaseLog = function(x, y) {
+    return Math.log(y) / Math.log(x);
+};
