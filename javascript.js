@@ -41,76 +41,93 @@ let prevKey = '';
 const display = document.getElementById('display');
 const buttons = document.querySelectorAll('button');
 buttons.forEach((button) => {
-    button.addEventListener('click', (e) => {
-        if (e.target.className == 'clear') {
+    button.addEventListener('click', chooseOperation);
+});
+
+window.addEventListener('keydown', (e) => {
+    const KEYS = [
+        '1','2','3','4','5','6','7','8','9','0',
+        '/','*','-','+','=','.','x','X',
+        'Enter','Backspace','Delete', 'Escape']
+    let key = e.key;
+    if (!KEYS.includes(key)) {
+        return;
+    }
+    if (key == '*' || key == '+' || key == '/' || key == '=' || key == '.') {
+        key = '\\' + key;
+    }
+    document.querySelector(`.key-${key}`).click();
+});
+
+function chooseOperation(e) {
+    if (e.target.className.includes('clear')) {
+        displayValue = '0';
+        storedValue = '';
+        operator = '';
+        prevKey = '';
+        display.textContent = displayValue;
+    }
+    else if (e.target.className.includes('operator')) {
+        if (prevKey == 'operator')
+        {
+            operator = e.target.textContent;
+        }
+        else if (prevKey == 'equals') {
+            storedValue = displayValue;
+            operator = e.target.textContent;
             displayValue = '0';
-            storedValue = '';
-            operator = '';
-            prevKey = '';
-            display.textContent = displayValue;
         }
-        else if (e.target.className == 'operator') {
-            if (prevKey == 'operator')
-            {
-                operator = e.target.textContent;
-            }
-            else if (prevKey == 'equals') {
-                storedValue = displayValue;
-                operator = e.target.textContent;
-                displayValue = '0';
-            }
-            else if (prevKey == 'num') {
-                if (storedValue) {
-                    displayValue = operate(operator, storedValue, display.textContent);
-                    display.textContent = truncate(displayValue);
-                }
-                storedValue = displayValue;
-                operator = e.target.textContent;
-                displayValue = '0';
-            }
-            prevKey = 'operator';
-        }
-        else if (e.target.className == 'equals' &&
-                prevKey != 'equals' &&
-                prevKey != 'operator') {
-            if (operator) {
-                displayValue = operate(operator, storedValue, displayValue);
-                operator = '';
-                storedValue = '';
+        else if (prevKey == 'num') {
+            if (storedValue) {
+                displayValue = operate(operator, storedValue, display.textContent);
                 display.textContent = truncate(displayValue);
             }
-            prevKey = 'equals';
+            storedValue = displayValue;
+            operator = e.target.textContent;
+            displayValue = '0';
         }
-        else if (e.target.className == 'digit') {
-            if (displayValue == '0' ||
-                prevKey == 'equals') {
-                displayValue = e.target.textContent;
+        prevKey = 'operator';
+    }
+    else if (e.target.className.includes('equals') &&
+            prevKey != 'equals' &&
+            prevKey != 'operator') {
+        if (operator) {
+            displayValue = operate(operator, storedValue, displayValue);
+            operator = '';
+            storedValue = '';
+            display.textContent = truncate(displayValue);
+        }
+        prevKey = 'equals';
+    }
+    else if (e.target.className.includes('digit')) {
+        if (displayValue == '0' ||
+            prevKey == 'equals') {
+            displayValue = e.target.textContent;
+        }
+        else {
+            displayValue += e.target.textContent;
+        }
+        display.textContent = truncate(displayValue);
+        prevKey = 'num';
+    }
+    else if (e.target.className.includes('decimal')) {
+        if (!displayValue.includes('.')) {
+            displayValue += e.target.textContent;
+            display.textContent = truncate(displayValue);
+        }
+    }
+    else if (e.target.className.includes('backspace')) {
+        if (displayValue != '0') {
+            if (displayValue.length == 1) {
+                displayValue = '0';
             }
             else {
-                displayValue += e.target.textContent;
-            }
-            display.textContent = truncate(displayValue);
-            prevKey = 'num';
-        }
-        else if (e.target.className == 'decimal') {
-            if (!displayValue.includes('.')) {
-                displayValue += e.target.textContent;
-                display.textContent = truncate(displayValue);
+                displayValue = displayValue.slice(0, displayValue.length - 1);
             }
         }
-        else if (e.target.className == 'backspace') {
-            if (displayValue != '0') {
-                if (displayValue.length == 1) {
-                    displayValue = '0';
-                }
-                else {
-                    displayValue = displayValue.slice(0, displayValue.length - 1);
-                }
-            }
-            display.textContent = truncate(displayValue);
-        }
-    });
-});
+        display.textContent = truncate(displayValue);
+    }
+}
 
 const maxDisplayLength = 8;
 const maxDisplayNumber = 10 ** maxDisplayLength - 1;
