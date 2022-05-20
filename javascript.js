@@ -127,6 +127,11 @@ function chooseOperation(e) {
         }
         display.textContent = truncate(displayValue);
     }
+    else if(e.target.className.includes('plus-minus')) {
+        console.log(displayValue);
+        displayValue = displayValue*-1
+        display.textContent = truncate(displayValue);
+    }
 }
 
 const maxDisplayLength = 8;
